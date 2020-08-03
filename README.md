@@ -2,9 +2,15 @@
 
 test the memory usage of 1000 tables during encoding and decoding.
 
-1 goroutine, 1.2 GB
+each table takes about 7 kb, including 10 columns and 10 indexes.
 
-5 goroutine, 2.0 GB
+1  goroutine,  decoding takes about 1.2 GB
+
+5  goroutines, decoding takes about 2.0 GB
+
+10 goroutines, decoding takes about 2.43GB
+
+we see the encoding and decoding process costs too much memory.
 
 # command
 ```
