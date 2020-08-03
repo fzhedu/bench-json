@@ -2,6 +2,8 @@ package json_bench
 
 import (
 	"encoding/json"
+	jsoniter "github.com/json-iterator/go"
+	"sync"
 	"testing"
 )
 const tblNum = 1000
@@ -15,29 +17,66 @@ func JsonFor() [][]byte  {
 	}
 	return tblByte
 }
+func JsoniterFor() [][]byte  {
+	var tblByte [][]byte
+	tbls := genTables(tblNum)
+	for i :=0; i< tblNum; i++ {
+		data, _ :=jsoniter.Marshal(tbls[i])
+		tblByte = append(tblByte, data)
+	}
+	return tblByte
+}
 
 func JsonForUnmarshal(tblByte [][]byte)  {
 	var tbl TableInfo
 	for i :=0; i< tblNum; i++ {
 		json.Unmarshal(tblByte[i], &tbl)
-/*		if i==100 {
-			fmt.Println(len(tblByte[i]))
-		}*/
+	}
+}
+func JsonForUnmarshalParallel(tblByte [][]byte)  {
+	goNum := 5
+	wg := &sync.WaitGroup{}
+	wg.Add(goNum)
+	for id := 0; id< goNum; id++ {
+		wid :=id
+		go func() {
+			defer wg.Done()
+			var tbl TableInfo
+			for i :=wid; i< tblNum; i = i+goNum {
+				json.Unmarshal(tblByte[i], &tbl)
+			}
+		}()
+	}
+	wg.Wait()
+}
+func JsoniterForUnmarshal(tblByte [][]byte)  {
+	var tbl TableInfo
+	for i :=0; i< tblNum; i++ {
+		jsoniter.Unmarshal(tblByte[i], &tbl)
 	}
 }
 func JsonForRangeUnmarshal(tblByte [][]byte)  {
 	var tbl TableInfo
 	for _, res := range tblByte {
 		json.Unmarshal(res, &tbl)
-		/*		if i==100 {
-				fmt.Println(len(tblByte[i]))
-			}*/
+	}
+}
+func JsoniterForRangeUnmarshal(tblByte [][]byte)  {
+	var tbl TableInfo
+	for _, res := range tblByte {
+		jsoniter.Unmarshal(res, &tbl)
 	}
 }
 func BenchmarkJsonForMarshal(b *testing.B) {
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
 		JsonFor()
+	}
+}
+func BenchmarkJsoniterForMarshal(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		JsoniterFor()
 	}
 }
 func BenchmarkJsonForUnmarshal(b *testing.B) {
@@ -48,11 +87,35 @@ func BenchmarkJsonForUnmarshal(b *testing.B) {
 		JsonForUnmarshal(tblByte)
 	}
 }
+func BenchmarkJsonForUnmarshalParallel(b *testing.B) {
+	tblByte := JsonFor()
+	b.ResetTimer()
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		JsonForUnmarshalParallel(tblByte)
+	}
+}
+func BenchmarkJsoniterForUnmarshal(b *testing.B) {
+	tblByte := JsoniterFor()
+	b.ResetTimer()
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		JsoniterForUnmarshal(tblByte)
+	}
+}
 func BenchmarkJsonForRangeUnmarshal(b *testing.B) {
 	tblByte := JsonFor()
 	b.ResetTimer()
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
 		JsonForRangeUnmarshal(tblByte)
+	}
+}
+func BenchmarkJsoniterForRangeUnmarshal(b *testing.B) {
+	tblByte := JsoniterFor()
+	b.ResetTimer()
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		JsoniterForRangeUnmarshal(tblByte)
 	}
 }
