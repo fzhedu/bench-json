@@ -15,5 +15,5 @@ we see the encoding and decoding process costs too much memory.
 # command
 ```
  go test -bench=BenchmarkJsonForUnmarshalParallel -benchtime=5s -memprofile=memPar.prof
- go tool pprof -http=:8080 mem.prof 
+ go tool pprof -http=:8080 memPar.prof 
 ```
