@@ -2,7 +2,9 @@ package json_bench
 
 import (
 	"encoding/json"
+	"fmt"
 	jsoniter "github.com/json-iterator/go"
+	"runtime"
 	"sync"
 	"testing"
 )
@@ -29,21 +31,75 @@ func JsoniterFor() [][]byte  {
 
 func JsonForUnmarshal(tblByte [][]byte)  {
 	var tbl TableInfo
+	var tblArray []*TableInfo
 	for i :=0; i< tblNum; i++ {
-		json.Unmarshal(tblByte[i], &tbl)
+		err := json.Unmarshal(tblByte[i], &tbl)
+		if err != nil {
+			fmt.Println("error")
+			break
+		}
+		tblArray = append(tblArray, &tbl)
+	}
+	if len(tblArray) != tblNum {
+		fmt.Println("error")
+	}
+}
+func JsonForUnmarshalGC(tblByte [][]byte)  {
+	var tbl TableInfo
+	var tblArray []*TableInfo
+	for i :=0; i< tblNum; i++ {
+		err := json.Unmarshal(tblByte[i], &tbl)
+		if err != nil {
+			fmt.Println("error")
+			break
+		}
+		tblArray = append(tblArray, &tbl)
+		runtime.GC()
+	}
+	if len(tblArray) != tblNum {
+		fmt.Println("error")
 	}
 }
 func JsonForUnmarshalParallel(tblByte [][]byte)  {
-	goNum := 5
+	goNum := 10
 	wg := &sync.WaitGroup{}
 	wg.Add(goNum)
 	for id := 0; id< goNum; id++ {
 		wid :=id
 		go func() {
 			defer wg.Done()
+			var tblArray []*TableInfo
 			var tbl TableInfo
 			for i :=wid; i< tblNum; i = i+goNum {
-				json.Unmarshal(tblByte[i], &tbl)
+				err := json.Unmarshal(tblByte[i], &tbl)
+				if err != nil {
+					fmt.Println("error")
+					break
+				}
+				tblArray = append(tblArray, &tbl)
+			}
+		}()
+	}
+	wg.Wait()
+}
+func JsonForUnmarshalParallelGC(tblByte [][]byte)  {
+	goNum := 10
+	wg := &sync.WaitGroup{}
+	wg.Add(goNum)
+	for id := 0; id< goNum; id++ {
+		wid :=id
+		go func() {
+			defer wg.Done()
+			var tblArray []*TableInfo
+			var tbl TableInfo
+			for i :=wid; i< tblNum; i = i+goNum {
+				err := json.Unmarshal(tblByte[i], &tbl)
+				if err != nil {
+					fmt.Println("error")
+					break
+				}
+				tblArray = append(tblArray, &tbl)
+				runtime.GC()
 			}
 		}()
 	}
@@ -79,7 +135,7 @@ func BenchmarkJsoniterForMarshal(b *testing.B) {
 		JsoniterFor()
 	}
 }
-func BenchmarkJsonForUnmarshal(b *testing.B) {
+func BenchmarkJsonForUnmarshalNoGC(b *testing.B) {
 	tblByte := JsonFor()
 	b.ResetTimer()
 	b.ReportAllocs()
@@ -87,12 +143,28 @@ func BenchmarkJsonForUnmarshal(b *testing.B) {
 		JsonForUnmarshal(tblByte)
 	}
 }
-func BenchmarkJsonForUnmarshalParallel(b *testing.B) {
+func BenchmarkJsonForUnmarshalParallelNoGC(b *testing.B) {
 	tblByte := JsonFor()
 	b.ResetTimer()
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
 		JsonForUnmarshalParallel(tblByte)
+	}
+}
+func BenchmarkJsonForUnmarshalGC(b *testing.B) {
+	tblByte := JsonFor()
+	b.ResetTimer()
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		JsonForUnmarshalGC(tblByte)
+	}
+}
+func BenchmarkJsonForUnmarshalParallelGC(b *testing.B) {
+	tblByte := JsonFor()
+	b.ResetTimer()
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		JsonForUnmarshalParallelGC(tblByte)
 	}
 }
 func BenchmarkJsoniterForUnmarshal(b *testing.B) {
