@@ -30,9 +30,9 @@ func JsoniterFor() [][]byte  {
 }
 
 func JsonForUnmarshal(tblByte [][]byte)  {
-	var tbl TableInfo
 	var tblArray []*TableInfo
 	for i :=0; i< tblNum; i++ {
+		var tbl TableInfo
 		err := json.Unmarshal(tblByte[i], &tbl)
 		if err != nil {
 			fmt.Println("error")
@@ -45,9 +45,9 @@ func JsonForUnmarshal(tblByte [][]byte)  {
 	}
 }
 func JsonForUnmarshalGC(tblByte [][]byte)  {
-	var tbl TableInfo
 	var tblArray []*TableInfo
 	for i :=0; i< tblNum; i++ {
+		var tbl TableInfo
 		err := json.Unmarshal(tblByte[i], &tbl)
 		if err != nil {
 			fmt.Println("error")
@@ -69,8 +69,8 @@ func JsonForUnmarshalParallel(tblByte [][]byte)  {
 		go func() {
 			defer wg.Done()
 			var tblArray []*TableInfo
-			var tbl TableInfo
 			for i :=wid; i< tblNum; i = i+goNum {
+				var tbl TableInfo
 				err := json.Unmarshal(tblByte[i], &tbl)
 				if err != nil {
 					fmt.Println("error")
@@ -91,8 +91,8 @@ func JsonForUnmarshalParallelGC(tblByte [][]byte)  {
 		go func() {
 			defer wg.Done()
 			var tblArray []*TableInfo
-			var tbl TableInfo
 			for i :=wid; i< tblNum; i = i+goNum {
+				var tbl TableInfo
 				err := json.Unmarshal(tblByte[i], &tbl)
 				if err != nil {
 					fmt.Println("error")
