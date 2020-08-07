@@ -27,5 +27,6 @@ we see the encoding and decoding process costs too much memory.
 ```
 after invoke `runtime.GC()`after each json.unmarshal(), the memory usage drops so much.
 
-1  goroutine,  400 MB -> 60 MB
-10 goroutine, 2329 MB -> 265 MB
+1  goroutine,  691 MB -> 90 MB
+
+10 goroutine, 3770 MB -> 355 MB
