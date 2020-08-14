@@ -3,15 +3,15 @@ type ColumnInfo struct {
 	ID                    int64       `json:"id"`
 	Name                  string       `json:"name"`
 	Offset                int         `json:"offset"`
-	OriginDefaultValue    interface{} `json:"origin_default"`
+	OriginDefaultValue    int64 `json:"origin_default"`
 	OriginDefaultValueBit []byte      `json:"origin_default_bit"`
-	DefaultValue          interface{} `json:"default"`
+	DefaultValue          int64 `json:"default"`
 	DefaultValueBit       []byte      `json:"default_bit"`
 	// DefaultIsExpr is indicates the default value string is expr.
 	DefaultIsExpr       bool                `json:"default_is_expr"`
 	GeneratedExprString string              `json:"generated_expr_string"`
 	GeneratedStored     bool                `json:"generated_stored"`
-	Dependences         map[string]struct{} `json:"dependences"`
+	Dependences         int64 `json:"dependences"`
 	Comment             string      `json:"comment"`
 	// A hidden column is used internally(expression index) and are not accessible by users.
 	Hidden bool `json:"hidden"`
@@ -20,7 +20,7 @@ type ColumnInfo struct {
 	//              That is a bug if multiple TiDB servers in different system time zone.
 	// Version = 1: For OriginDefaultValue and DefaultValue of timestamp column will stores the default time in UTC time zone.
 	//              This will fix bug in version 0. For compatibility with version 0, we add version field in column info struct.
-	Version uint64 `json:"version"`
+	Version int64 `json:"version"`
 }
 
 // IndexInfo provides meta data describing a DB index.
@@ -81,7 +81,7 @@ type TableInfo struct {
 	PreSplitRegions uint64 `json:"pre_split_regions"`
 	Compression string `json:"compression"`
 	// Version means the version of the table info.
-	Version uint16 `json:"version"`
+	Version uint64 `json:"version"`
 }
 func genTables(num int) []*TableInfo {
 	tbl := make([]*TableInfo,num)
@@ -93,14 +93,14 @@ func genTables(num int) []*TableInfo {
 			ID:                    int64(i),
 			Name:                  "colssssssssssss                 ssssssss",
 			Offset:                0,
-			OriginDefaultValue:    nil,
+			OriginDefaultValue:    0,
 			OriginDefaultValueBit: nil,
-			DefaultValue:          nil,
+			DefaultValue:          0,
 			DefaultValueBit:       nil,
 			DefaultIsExpr:         false,
 			GeneratedExprString:   "bcs                                  asdf",
 			GeneratedStored:       false,
-			Dependences:           nil,
+			Dependences:           0,
 			Comment:               "test test commewnts   atet           asd",
 			Hidden:                false,
 			Version:               0,

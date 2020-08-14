@@ -1,0 +1,67 @@
+syntax = "proto2";
+
+package json_bench;
+
+option java_multiple_files = true;
+option java_package = "com.pingcap.tidb.json_bench";
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.sizer_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+
+message PColumnInfo {
+	optional int64              ID                          = 1[(gogoproto.nullable) = false];
+	optional string             Name                        = 2[(gogoproto.nullable) = false];
+	optional int32              Offset                      = 3[(gogoproto.nullable) = false];
+	optional int64              OriginDefaultValue          = 4[(gogoproto.nullable) = false];
+	optional bytes              OriginDefaultValueBit       = 5[(gogoproto.nullable) = false];
+	optional int64              DefaultValue                = 6[(gogoproto.nullable) = false];
+	optional bytes              DefaultValueBit             = 7[(gogoproto.nullable) = false];
+	optional bool               DefaultIsExpr               = 8[(gogoproto.nullable) = false];
+	optional string             GeneratedExprString         = 9[(gogoproto.nullable) = false];
+	optional bool               GeneratedStored             = 10[(gogoproto.nullable) = false];
+	optional int64              Dependences                 = 11[(gogoproto.nullable) = false];
+	optional string             Comment                     = 12[(gogoproto.nullable) = false];
+	optional bool               Hidden                      = 13[(gogoproto.nullable) = false];
+	optional int64              Version                     = 14[(gogoproto.nullable) = false];
+}
+
+message PIndexInfo {
+    optional int64              ID                          = 1[(gogoproto.nullable) = false];
+    optional string             Name                        = 2[(gogoproto.nullable) = false];
+    optional string             Table                       = 3[(gogoproto.nullable) = false];
+    repeated string             Columns                     = 4[(gogoproto.nullable) = false];
+    optional string             Comment                     = 5[(gogoproto.nullable) = false];
+    optional bool               Unique                      = 6[(gogoproto.nullable) = false];
+    optional bool               Primary                     = 7[(gogoproto.nullable) = false];
+    optional bool               Invisible                   = 8[(gogoproto.nullable) = false];
+}
+
+message PTableInfo {
+    required int64              ID                          = 1[(gogoproto.nullable) = false];
+    optional string             Name                        = 2[(gogoproto.nullable) = false];
+    optional string             Charset                     = 3[(gogoproto.nullable) = false];
+    optional string             Collate                     = 4[(gogoproto.nullable) = false];
+    repeated PColumnInfo        Columns                     = 5;
+    repeated PIndexInfo         Indices                     = 6;
+    optional bool               PKIsHandle                  = 7[(gogoproto.nullable) = false];
+    optional bool               IsCommonHandle              = 8[(gogoproto.nullable) = false];
+    optional string             Comment                     = 9[(gogoproto.nullable) = false];
+    optional int64 	            AutoIncID                   =10[(gogoproto.nullable) = false];
+    optional int64 	            AutoIdCache                 =11[(gogoproto.nullable) = false];
+    optional int64 	            AutoRandID                  =12[(gogoproto.nullable) = false];
+    optional int64 	            MaxColumnID                 =13[(gogoproto.nullable) = false];
+    optional int64 	            MaxIndexID                  =14[(gogoproto.nullable) = false];
+    optional int64 	            MaxConstraintID             =15[(gogoproto.nullable) = false];
+    optional int64 	            UpdateTS                    =16[(gogoproto.nullable) = false];
+    optional int64 	            OldSchemaID                 =17[(gogoproto.nullable) = false];
+    optional int64 	            ShardRowIDBits              =18[(gogoproto.nullable) = false];
+    optional int64 	            MaxShardRowIDBits           =19[(gogoproto.nullable) = false];
+    optional int64 	            AutoRandomBits              =20[(gogoproto.nullable) = false];
+    optional int64 	            PreSplitRegions             =21[(gogoproto.nullable) = false];
+    optional string	            Compression                 =22[(gogoproto.nullable) = false];
+    optional int64 	            Version                     =23[(gogoproto.nullable) = false];
+
+}
